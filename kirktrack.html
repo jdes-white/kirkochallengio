@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kirsten's 12 Week Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#1a0a2e;--bg2:#231340;--card:#2a1650;--card2:#321960;--accent:#e879f9;--accent2:#c026d3;--teal:#67e8f9;--teal2:#06b6d4;--gold:#fbbf24;--green:#4ade80;--text:#f3e8ff;--muted:#a78bca;--border:rgba(232,121,249,0.2);--streak:#f97316;--red:#f87171;--amber:#fbbf24;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding-bottom:120px;}
+  .header{background:linear-gradient(135deg,#2a1650 0%,#1a0a2e 60%,#0f0520 100%);padding:32px 20px 24px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:300px;height:200px;background:radial-gradient(ellipse,rgba(232,121,249,0.15) 0%,transparent 70%);pointer-events:none;}
+  .header h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--accent) 0%,var(--teal) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:default;}
+  .header .date{color:var(--muted);font-size:14px;margin-top:4px;font-weight:300;}
+  .phase-badge{display:inline-block;margin-top:12px;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;}
+  .phase-1{background:rgba(251,191,36,0.15);color:var(--gold);border:1px solid rgba(251,191,36,0.3);}
+  .phase-2{background:rgba(103,232,249,0.15);color:var(--teal);border:1px solid rgba(103,232,249,0.3);}
+  .phase-3{background:rgba(74,222,128,0.15);color:var(--green);border:1px solid rgba(74,222,128,0.3);}
+  .nav{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+  .nav::-webkit-scrollbar{display:none;}
+  .nav button{flex:1;min-width:65px;padding:14px 4px;background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+  .nav button.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .page{display:none;padding:20px;}.page.active{display:block;}
+  .stack-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+  .stack-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;}
+  .habit-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);cursor:pointer;}
+  .habit-row:last-child{border-bottom:none;}
+  .checkbox{width:28px;height:28px;border-radius:8px;border:2px solid var(--teal2);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.2s;cursor:pointer;}
+  .checkbox.checked{background:var(--teal2);border-color:var(--teal2);}
+  .checkbox.checked::after{content:'✓';color:var(--bg);font-size:14px;font-weight:700;}
+  .habit-info{flex:1;}
+  .habit-name{font-size:15px;font-weight:500;color:var(--text);}
+  .habit-name.has-panel{color:var(--teal);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;}
+  .streak-text{font-size:12px;color:var(--streak);margin-top:2px;font-weight:500;}
+  .streak-text.zero{color:var(--muted);}
+  .section-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;padding-left:4px;}
+  /* Rest day banner */
+  .rest-day-banner{background:rgba(167,139,202,0.08);border:1px solid rgba(167,139,202,0.2);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .rest-day-banner .rd-icon{font-size:22px;}
+  .rest-day-banner .rd-text{font-size:13px;color:var(--muted);}
+  .rest-day-banner .rd-text strong{color:var(--text);display:block;font-size:14px;margin-bottom:2px;}
+  /* Nutrition number entry */
+  .nutri-entry{padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .nutri-entry:last-child{border-bottom:none;}
+  .nutri-label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .nutri-label{font-size:14px;font-weight:500;color:var(--text);}
+  .nutri-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:0.5px;}
+  .nutri-status.good{background:rgba(74,222,128,0.15);color:var(--green);border:1px solid rgba(74,222,128,0.3);}
+  .nutri-status.over{background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.3);}
+  .nutri-status.under{background:rgba(251,191,36,0.15);color:var(--amber);border:1px solid rgba(251,191,36,0.3);}
+  .nutri-status.empty{background:transparent;color:var(--muted);border:1px solid rgba(167,139,202,0.2);}
+  .nutri-input-row{display:flex;gap:8px;align-items:center;}
+  .nutri-input{flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;}
+  .nutri-input:focus{outline:none;border-color:var(--accent);}
+  .nutri-unit{font-size:12px;color:var(--muted);white-space:nowrap;}
+  .nutri-target{font-size:11px;color:var(--muted);margin-top:6px;}
+  .nutri-target span{color:var(--teal);}
+  /* Stats */
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;}
+  .stat-value{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--accent);}
+  .stat-label{font-size:11px;color:var(--muted);margin-top:4px;}
+  /* 7-day grid */
+  .grid-section{margin-bottom:24px;}
+  .grid-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:16px;text-align:center;}
+  .grid-table{width:100%;}
+  .grid-table .day-headers{display:grid;grid-template-columns:1fr repeat(7,30px);gap:3px;margin-bottom:8px;padding-left:4px;}
+  .grid-table .day-headers span{text-align:center;font-size:9px;font-weight:600;color:var(--teal);}
+  .grid-row{display:grid;grid-template-columns:1fr repeat(7,30px);gap:3px;align-items:center;margin-bottom:6px;}
+  .grid-row .habit-label{font-size:11px;color:var(--muted);padding-left:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .grid-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--teal2);background:transparent;margin:0 auto;transition:background 0.2s;}
+  .grid-dot.filled{background:var(--teal2);}
+  .grid-dot.rest{border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);}
+  /* Phase completion */
+  .phase-completion-section{margin-bottom:20px;}
+  .phase-block{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;}
+  .phase-block-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .phase-block-title{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+  .phase-block-pct{font-size:14px;font-weight:700;}
+  .phase-bar-bg{background:rgba(255,255,255,0.06);border-radius:8px;height:8px;overflow:hidden;margin-bottom:12px;}
+  .phase-bar-fill{height:100%;border-radius:8px;transition:width 0.6s ease;}
+  .phase-hab-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  .phase-hab-row:last-child{border-bottom:none;}
+  .phase-hab-name{color:var(--muted);}
+  .phase-hab-val{color:var(--teal);font-weight:600;}
+  .phase-locked{opacity:0.35;pointer-events:none;}
+  /* Weekly card */
+  .weekly-card{background:linear-gradient(135deg,rgba(74,222,128,0.08) 0%,rgba(42,22,80,0.8) 100%);border:1px solid rgba(74,222,128,0.25);border-radius:16px;padding:20px;margin-bottom:16px;}
+  .weekly-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .weekly-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
+  .weekly-status{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;}
+  .weekly-status.done{background:rgba(74,222,128,0.15);color:var(--green);border:1px solid rgba(74,222,128,0.3);}
+  .weekly-status.pending{background:rgba(167,139,202,0.1);color:var(--muted);border:1px solid rgba(167,139,202,0.2);}
+  .week-days-row{display:flex;gap:6px;margin-top:12px;}
+  .week-day-dot{flex:1;text-align:center;}
+  .week-day-dot .wd-label{font-size:9px;color:var(--muted);display:block;margin-bottom:4px;font-weight:600;}
+  .week-day-dot .wd-circle{width:28px;height:28px;border-radius:50%;border:2px solid rgba(74,222,128,0.3);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;}
+  .week-day-dot .wd-circle.done{background:var(--green);border-color:var(--green);color:var(--bg);}
+  .week-day-dot .wd-circle.today-dot{border-color:var(--green);}
+  .pilates-count{font-size:11px;color:var(--muted);margin-top:8px;text-align:center;}
+  .pilates-count span{color:var(--green);font-weight:600;}
+  /* Panels */
+  .panel-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,5,20,0.85);z-index:100;backdrop-filter:blur(4px);}
+  .panel-overlay.open{display:flex;align-items:flex-end;}
+  .panel{background:var(--card2);border-radius:24px 24px 0 0;border-top:1px solid var(--border);width:100%;max-height:90vh;overflow-y:auto;padding:24px 20px 40px;animation:slideUp 0.3s ease;}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .panel-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--accent);}
+  .close-btn{background:rgba(255,255,255,0.1);border:none;color:var(--muted);padding:8px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;font-family:'DM Sans',sans-serif;}
+  .panel-content{display:block;}
+  .tag-pill{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;background:rgba(103,232,249,0.1);color:var(--teal);border:1px solid rgba(103,232,249,0.2);margin-bottom:16px;}
+  .prompt-box{background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;margin-bottom:16px;}
+  .prompt-box h4{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
+  .prompt-box ul{padding-left:0;list-style:none;}
+  .prompt-box li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;color:var(--text);display:flex;align-items:flex-start;gap:10px;}
+  .prompt-box li:last-child{border-bottom:none;}
+  .prompt-box li::before{content:'•';color:var(--teal);flex-shrink:0;margin-top:1px;}
+  .prompt-box .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+  .quote-block{border-left:3px solid var(--accent);padding:10px 14px;margin:16px 0;font-style:italic;color:var(--accent);font-size:14px;background:rgba(232,121,249,0.05);border-radius:0 8px 8px 0;}
+  .reminder-box{background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.3);border-radius:12px;padding:14px;margin-top:16px;}
+  .reminder-box span{color:var(--streak);font-weight:600;font-size:13px;}
+  .reminder-box p{color:var(--text);font-size:13px;display:inline;}
+  .phase-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:13px;}
+  .phase-row:last-child{border-bottom:none;}
+  .phase-row .label{color:var(--muted);}
+  .phase-row .val{color:var(--teal);font-weight:600;}
+  /* Placeholder */
+  .placeholder-card{background:rgba(167,139,202,0.05);border:1px dashed rgba(167,139,202,0.25);border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;}
+  .placeholder-card .ph-icon{font-size:28px;margin-bottom:8px;}
+  .placeholder-card .ph-title{font-size:13px;font-weight:600;color:var(--muted);}
+  .placeholder-card .ph-sub{font-size:11px;color:rgba(167,139,202,0.5);margin-top:4px;letter-spacing:0.5px;}
+  /* Awards */
+  .awards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .award-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;position:relative;overflow:hidden;}
+  .award-card.earned{border-color:rgba(251,191,36,0.4);background:linear-gradient(135deg,rgba(251,191,36,0.08) 0%,var(--card) 100%);}
+  .award-card.locked{opacity:0.4;filter:grayscale(0.7);}
+  .award-icon{font-size:36px;margin-bottom:8px;display:block;}
+  .award-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;}
+  .award-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+  .award-date{font-size:10px;color:var(--gold);margin-top:6px;font-weight:600;}
+  .award-tier{font-size:9px;color:var(--muted);margin-top:4px;letter-spacing:1px;text-transform:uppercase;}
+  .award-earned-badge{position:absolute;top:8px;right:8px;background:var(--gold);color:var(--bg);font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;letter-spacing:0.5px;}
+  .awards-section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;padding-left:4px;}
+  /* Award popup */
+  .award-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,5,20,0.92);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+  .award-popup.show{display:flex;}
+  .award-popup-inner{text-align:center;padding:40px 30px;animation:awardPop 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+  @keyframes awardPop{from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+  .award-popup-icon{font-size:80px;display:block;margin-bottom:16px;}
+  .award-popup-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--gold);margin-bottom:8px;}
+  .award-popup-sub{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5;}
+  .award-popup-close{background:var(--accent2);border:none;color:white;padding:14px 40px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;}
+  /* Buttons */
+  .action-row{display:flex;gap:12px;margin-top:24px;}
+  .btn{flex:1;padding:14px;border-radius:12px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+  .btn:active{opacity:0.8;}
+  .btn-reset{background:rgba(249,115,22,0.15);color:var(--streak);border:1px solid rgba(249,115,22,0.3);}
+  .btn-export{background:rgba(103,232,249,0.1);color:var(--teal);border:1px solid rgba(103,232,249,0.3);}
+  .btn-import{background:rgba(103,232,249,0.1);color:var(--teal);border:1px solid rgba(103,232,249,0.3);}
+  .phase-selector{display:flex;gap:8px;margin:16px 0;}
+  .phase-btn{flex:1;padding:10px 6px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+  .phase-btn.active-p1{background:rgba(251,191,36,0.1);color:var(--gold);border-color:rgba(251,191,36,0.3);}
+  .phase-btn.active-p2{background:rgba(103,232,249,0.1);color:var(--teal);border-color:rgba(103,232,249,0.3);}
+  .phase-btn.active-p3{background:rgba(74,222,128,0.1);color:var(--green);border-color:rgba(74,222,128,0.3);}
+  /* Weight */
+  .weight-input-row{display:flex;gap:10px;margin-top:12px;}
+  .weight-input{flex:1;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;}
+  .weight-input:focus{outline:none;border-color:var(--accent);}
+  .btn-small{padding:12px 20px;border-radius:10px;border:none;background:var(--accent2);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  .weight-history{margin-top:12px;}
+  .weight-entry{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;}
+  .weight-entry .w-date{color:var(--muted);}
+  .weight-entry .w-val{color:var(--teal);font-weight:600;}
+  .w-down{color:var(--green);}.w-up{color:#f87171;}
+  /* Import modal */
+  .import-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,5,20,0.88);z-index:150;align-items:flex-end;backdrop-filter:blur(4px);}
+  .import-modal.open{display:flex;}
+  .import-inner{background:var(--card2);border-radius:24px 24px 0 0;border-top:1px solid var(--border);width:100%;padding:24px 20px 40px;animation:slideUp 0.3s ease;}
+  .import-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+  .import-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+  .import-textarea{width:100%;height:160px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:12px;padding:14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;resize:none;line-height:1.5;}
+  .import-textarea:focus{outline:none;border-color:var(--accent);}
+  .import-error{color:#f87171;font-size:12px;margin-top:8px;display:none;}
+  .import-btns{display:flex;gap:10px;margin-top:14px;}
+  .import-confirm{flex:1;padding:14px;border-radius:12px;border:none;background:var(--accent2);color:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;}
+  .import-cancel{padding:14px 20px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;}
+  /* Dev mode */
+  .dev-panel{background:rgba(249,115,22,0.05);border:1px dashed rgba(249,115,22,0.4);border-radius:16px;padding:20px;margin-bottom:16px;}
+  .dev-title{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--streak);margin-bottom:14px;text-transform:uppercase;}
+  .dev-btn{display:block;width:100%;padding:10px 14px;margin-bottom:8px;background:rgba(249,115,22,0.1);border:1px solid rgba(249,115,22,0.25);border-radius:10px;color:var(--streak);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;text-align:left;}
+  .dev-btn.green{background:rgba(74,222,128,0.08);border-color:rgba(74,222,128,0.25);color:var(--green);}
+  .dev-btn.teal{background:rgba(103,232,249,0.08);border-color:rgba(103,232,249,0.25);color:var(--teal);}
+  .dev-btn:last-child{margin-bottom:0;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="headerTitle" onclick="devTap()">Kirsten's Challenge</h1>
+  <div class="date" id="headerDate"></div>
+  <div class="phase-badge" id="phaseBadge"></div>
+</div>
+
+<nav class="nav">
+  <button class="active" onclick="showPage('today',this)">Today</button>
+  <button onclick="showPage('progress',this)">Progress</button>
+  <button onclick="showPage('awards',this)">Awards</button>
+  <button onclick="showPage('guide',this)">Guide</button>
+  <button onclick="showPage('weight',this)">Weight</button>
+</nav>
+
+<!-- TODAY -->
+<div class="page active" id="page-today">
+
+  <div class="section-label">💪 Movement</div>
+  <!-- Fitstop: hidden Sunday, shown Mon-Sat -->
+  <div id="fitstop-section">
+    <div class="stack-card" id="fitstop-card">
+      <div class="habit-row" onclick="toggleHabit('fitstop')">
+        <div class="checkbox" id="cb-fitstop"></div>
+        <div class="habit-info"><div class="habit-name">Fitstop Class Complete</div><div class="streak-text" id="streak-fitstop"></div></div>
+      </div>
+      <div class="habit-row" onclick="toggleHabit('steps')">
+        <div class="checkbox" id="cb-steps"></div>
+        <div class="habit-info"><div class="habit-name">10,000 Steps Complete</div><div class="streak-text" id="streak-steps"></div></div>
+      </div>
+      <div class="habit-row" onclick="openPanel('stretch')">
+        <div class="checkbox" id="cb-stretch" onclick="event.stopPropagation();toggleHabit('stretch')"></div>
+        <div class="habit-info"><div class="habit-name has-panel">5 Min Stretch Complete ›</div><div class="streak-text" id="streak-stretch"></div></div>
+      </div>
+    </div>
+  </div>
+  <!-- Sunday rest day -->
+  <div id="sunday-section" style="display:none">
+    <div class="rest-day-banner">
+      <div class="rd-icon">🛌</div>
+      <div class="rd-text"><strong>Rest Day</strong>Fitstop is closed today — steps and stretch still count.</div>
+    </div>
+    <div class="stack-card">
+      <div class="habit-row" onclick="toggleHabit('steps')">
+        <div class="checkbox" id="cb-steps-sun"></div>
+        <div class="habit-info"><div class="habit-name">10,000 Steps Complete</div><div class="streak-text" id="streak-steps-sun"></div></div>
+      </div>
+      <div class="habit-row" onclick="openPanel('stretch')">
+        <div class="checkbox" id="cb-stretch-sun" onclick="event.stopPropagation();toggleHabit('stretch')"></div>
+        <div class="habit-info"><div class="habit-name has-panel">5 Min Stretch Complete ›</div><div class="streak-text" id="streak-stretch-sun"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🥗 Daily Review</div>
+  <div class="stack-card" id="nutrition-card">
+    <!-- Calories -->
+    <div class="nutri-entry">
+      <div class="nutri-label-row">
+        <span class="nutri-label">Calories</span>
+        <span class="nutri-status empty" id="cal-status">Not logged</span>
+      </div>
+      <div class="nutri-input-row">
+        <input class="nutri-input" type="number" id="cal-input" placeholder="e.g. 1650" oninput="saveNutri()">
+        <span class="nutri-unit">kcal</span>
+      </div>
+      <div class="nutri-target">Target: <span id="cal-target-text"></span></div>
+    </div>
+    <!-- Protein -->
+    <div class="nutri-entry">
+      <div class="nutri-label-row">
+        <span class="nutri-label">Protein</span>
+        <span class="nutri-status empty" id="pro-status">Not logged</span>
+      </div>
+      <div class="nutri-input-row">
+        <input class="nutri-input" type="number" id="pro-input" placeholder="e.g. 145" oninput="saveNutri()">
+        <span class="nutri-unit">g</span>
+      </div>
+      <div class="nutri-target">Target: <span id="pro-target-text"></span></div>
+    </div>
+    <!-- Water -->
+    <div class="habit-row" onclick="toggleHabit('water')" style="margin-top:4px">
+      <div class="checkbox" id="cb-water"></div>
+      <div class="habit-info"><div class="habit-name">2.5L Water Hit</div><div class="streak-text" id="streak-water"></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">📅 This Week</div>
+  <div class="weekly-card">
+    <div class="weekly-header">
+      <div class="weekly-title">🧘 Pilates / Extra Class</div>
+      <div class="weekly-status" id="weeklyStatus"></div>
+    </div>
+    <div class="habit-row" onclick="toggleWeeklyHabit('pilates')" style="padding-top:0">
+      <div class="checkbox" id="cb-pilates"></div>
+      <div class="habit-info"><div class="habit-name">Pilates or Extra Class</div><div class="streak-text" id="streak-pilates"></div></div>
+    </div>
+    <div class="week-days-row" id="weekDaysRow"></div>
+    <div class="pilates-count" id="pilatesCount"></div>
+  </div>
+
+  <div class="section-label">🍫 Craving SOS</div>
+  <div class="placeholder-card">
+    <div class="ph-icon">🚧</div>
+    <div class="ph-title">Craving SOS Panel</div>
+    <div class="ph-sub">COMING SOON — TO DISCUSS WITH KIRSTEN</div>
+  </div>
+
+  <div class="section-label">🧠 Mindset</div>
+  <div class="placeholder-card">
+    <div class="ph-icon">🚧</div>
+    <div class="ph-title">Mindset & Journal Panel</div>
+    <div class="ph-sub">COMING SOON — TO DISCUSS WITH KIRSTEN</div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-reset" onclick="resetToday()">Reset Today</button>
+    <button class="btn btn-export" onclick="exportData()">Export</button>
+    <button class="btn btn-import" onclick="importData()">Import</button>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="page" id="page-progress">
+  <div class="stats-grid" id="statsGrid"></div>
+  <div class="grid-section">
+    <div class="grid-title">LAST 7 DAYS</div>
+    <div class="grid-table">
+      <div class="day-headers" id="dayHeaders"></div>
+      <div id="gridRows"></div>
+    </div>
+  </div>
+  <div class="grid-title">PHASE COMPLETION</div>
+  <div class="phase-completion-section" id="phaseCompletionSection"></div>
+</div>
+
+<!-- AWARDS -->
+<div class="page" id="page-awards">
+  <div class="grid-title">TROPHY CASE</div>
+  <div id="awardsContainer"></div>
+</div>
+
+<!-- GUIDE -->
+<div class="page" id="page-guide">
+  <div style="margin-bottom:16px">
+    <div class="grid-title">12 WEEK PHASES</div>
+    <div class="phase-selector">
+      <button class="phase-btn" id="pbtn-1" onclick="showPhaseGuide(1)">Phase 1<br><span style="font-weight:300;font-size:10px">Wks 1–4</span></button>
+      <button class="phase-btn" id="pbtn-2" onclick="showPhaseGuide(2)">Phase 2<br><span style="font-weight:300;font-size:10px">Wks 5–8</span></button>
+      <button class="phase-btn" id="pbtn-3" onclick="showPhaseGuide(3)">Phase 3<br><span style="font-weight:300;font-size:10px">Wks 9–12</span></button>
+    </div>
+    <div class="stack-card" id="phaseGuideContent"></div>
+  </div>
+  <div class="stack-card">
+    <div class="stack-title">🏋️ Back-Safe Movement</div>
+    <ul style="list-style:none;padding:0">
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>No deadlifts or squats.</strong> Replace with hip thrusts, cable kickbacks, leg press.</span></li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>Core work:</strong> Dead bugs, bird dogs, pallof press.</span></li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>Pilates</strong> is excellent — prioritise when available.</span></li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>Walking pad:</strong> 4–5km/h, incline 1–2, 20–30 min to stack steps.</span></li>
+      <li style="padding:8px 0;font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>If back flares:</strong> Walking pad + stretch instead. Don't miss two in a row.</span></li>
+    </ul>
+  </div>
+  <div class="stack-card">
+    <div class="stack-title">😴 Sleep Protocol</div>
+    <ul style="list-style:none;padding:0">
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>Phone down by 9:30pm.</strong> Scrolling steals sleep quality, not just hours.</span></li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>Dim lights after 9pm.</strong> Signals cortisol to drop naturally.</span></li>
+      <li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>If you're woken in the night:</strong> Don't reach for your phone. Slow breath, soft focus — let your body find its way back.</span></li>
+      <li style="padding:8px 0;font-size:14px;display:flex;gap:10px"><span style="color:var(--teal)">•</span><span><strong>Target:</strong> In bed by 10pm where possible. Even 20 extra minutes makes a difference over 12 weeks.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- WEIGHT -->
+<div class="page" id="page-weight">
+  <div class="grid-title">WEIGHT LOG</div>
+  <div class="stack-card">
+    <div class="stack-title">Log Today's Weight</div>
+    <div class="weight-input-row">
+      <input class="weight-input" type="number" id="weightInput" placeholder="kg (e.g. 87.0)" step="0.1">
+      <button class="btn-small" onclick="logWeight()">Save</button>
+    </div>
+  </div>
+  <div class="stack-card"><div class="stack-title">History</div><div class="weight-history" id="weightHistory"></div></div>
+  <div class="stack-card" style="background:rgba(232,121,249,0.05)">
+    <div class="stack-title">📏 Starting Stats</div>
+    <div class="phase-row"><span class="label">Starting Weight</span><span class="val">87.0 kg</span></div>
+    <div class="phase-row"><span class="label">Height</span><span class="val">169 cm</span></div>
+    <div class="phase-row"><span class="label">Phase 1 Target</span><span class="val">~84 kg</span></div>
+    <div class="phase-row"><span class="label">12 Week Target</span><span class="val">~79–82 kg</span></div>
+    <div class="phase-row"><span class="label">Weigh In</span><span class="val">Same time, weekly</span></div>
+  </div>
+  <div id="devPanel" style="display:none">
+    <div class="dev-panel">
+      <div class="dev-title">🔧 Dev / Test Mode</div>
+      <button class="dev-btn" onclick="devTriggerAward('firstFire')">🔥 First Fire</button>
+      <button class="dev-btn" onclick="devTriggerAward('threeWeeks')">⚡ Three Weeks Strong</button>
+      <button class="dev-btn" onclick="devTriggerAward('unbreakable')">👑 Unbreakable</button>
+      <button class="dev-btn" onclick="devTriggerAward('classAct')">🏋️ Class Act</button>
+      <button class="dev-btn" onclick="devTriggerAward('stepMaster')">👟 Step Master</button>
+      <button class="dev-btn" onclick="devTriggerAward('fuelRight')">🥗 Fuel Right</button>
+      <button class="dev-btn" onclick="devTriggerAward('hydrationQueen')">💧 Hydration Queen</button>
+      <button class="dev-btn" onclick="devTriggerAward('perfectWeek')">💎 Perfect Week</button>
+      <button class="dev-btn" onclick="devTriggerAward('aboveAndBeyond')">🚀 Above & Beyond</button>
+      <button class="dev-btn" onclick="devTriggerAward('fullStack')">🌟 Full Stack</button>
+      <button class="dev-btn" onclick="devTriggerAward('phase1')">🌙 Phase 1 Complete</button>
+      <button class="dev-btn" onclick="devTriggerAward('phase2')">💪 Phase 2 Complete</button>
+      <button class="dev-btn" onclick="devTriggerAward('phase3')">🌿 The Lifestyle</button>
+      <button class="dev-btn" onclick="devTriggerAward('bodyFirst')">🧘 Body First</button>
+      <button class="dev-btn green" onclick="devSeedData()">📊 Seed test data</button>
+      <button class="dev-btn teal" onclick="devSetPhase(2)">⏩ Jump to Phase 2</button>
+      <button class="dev-btn teal" onclick="devSetPhase(3)">⏩ Jump to Phase 3</button>
+      <button class="dev-btn teal" onclick="devSetPhase(1)">↩ Reset to Phase 1</button>
+      <button class="dev-btn" onclick="devResetAwards()">🗑 Reset awards</button>
+      <button class="dev-btn" onclick="devResetAll()">💣 Reset ALL data</button>
+    </div>
+  </div>
+</div>
+
+<!-- STRETCH PANEL -->
+<div class="panel-overlay" id="panel-stretch">
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">🧘 Stretch</div><button class="close-btn" onclick="closePanel('stretch')">× CLOSE</button></div>
+    <div class="tag-pill">5 MIN — BACK SAFE</div>
+    <div class="prompt-box"><h4>Daily Routine</h4><ul>
+      <li><span><strong>Hip flexor stretch — kneeling.</strong><br><span class="sub">Lunge, push hips forward. 30 sec each side.</span></span></li>
+      <li><span><strong>90/90 hip stretch.</strong><br><span class="sub">Both legs at 90°. 30 sec per side.</span></span></li>
+      <li><span><strong>Thoracic rotation.</strong><br><span class="sub">Seated — 10 slow reps each side.</span></span></li>
+      <li><span><strong>Cat-cow.</strong><br><span class="sub">10 slow reps. Warms the whole spine.</span></span></li>
+      <li><span><strong>Child's pose.</strong><br><span class="sub">Hold 45 sec. Breathe.</span></span></li>
+    </ul></div>
+    <div class="quote-block">Five minutes done daily beats an hour done never.</div>
+    <div class="reminder-box"><span>Reminder: </span><p>Tick the Stretch checkbox once done.</p></div>
+  </div>
+</div>
+
+<!-- NUTRITION PANEL -->
+<div class="panel-overlay" id="panel-nutrition">
+  <div class="panel">
+    <div class="panel-header"><div class="panel-title">🥗 Nutrition</div><button class="close-btn" onclick="closePanel('nutrition')">× CLOSE</button></div>
+    <div class="prompt-box"><h4>Phase 1 — The Cut (Wks 1–4)</h4>
+      <div class="phase-row"><span class="label">Calories</span><span class="val">1,600–1,700 kcal</span></div>
+      <div class="phase-row"><span class="label">Protein</span><span class="val">145g minimum</span></div>
+      <div class="phase-row"><span class="label">Water</span><span class="val">2.5–3L daily</span></div>
+      <div class="phase-row"><span class="label">Floor</span><span class="val">Never below 1,500</span></div>
+    </div>
+    <div class="prompt-box"><h4>Phase 2 — The Build (Wks 5–8)</h4>
+      <div class="phase-row"><span class="label">Calories</span><span class="val">1,800–1,900 kcal</span></div>
+      <div class="phase-row"><span class="label">Protein</span><span class="val">140g minimum</span></div>
+      <div class="phase-row"><span class="label">Water</span><span class="val">2.5–3L daily</span></div>
+    </div>
+    <div class="prompt-box"><h4>Phase 3 — The Lifestyle (Wks 9–12)</h4>
+      <div class="phase-row"><span class="label">Calories</span><span class="val">Track loosely</span></div>
+      <div class="phase-row"><span class="label">Protein</span><span class="val">130g — non-negotiable</span></div>
+      <div class="phase-row"><span class="label">Water</span><span class="val">2.5L minimum</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="import-modal" id="importModal">
+  <div class="import-inner">
+    <div class="import-title">Import Data</div>
+    <div class="import-sub">Paste your exported JSON below and tap Confirm.</div>
+    <textarea class="import-textarea" id="importTextarea" placeholder="Paste JSON here..."></textarea>
+    <div class="import-error" id="importError">Invalid JSON — check your data and try again.</div>
+    <div class="import-btns">
+      <button class="import-cancel" onclick="closeImportModal()">Cancel</button>
+      <button class="import-confirm" onclick="confirmImport()">Confirm Import</button>
+    </div>
+  </div>
+</div>
+
+<!-- AWARD POPUP -->
+<div class="award-popup" id="awardPopup">
+  <div class="award-popup-inner">
+    <span class="award-popup-icon" id="popupIcon"></span>
+    <div class="award-popup-title" id="popupTitle"></div>
+    <div class="award-popup-sub" id="popupSub"></div>
+    <button class="award-popup-close" onclick="closeAwardPopup()">Collect Award ✨</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// AWARD DEFINITIONS — 4 tiers
+// ============================================================
+const AWARD_DEFS = {
+  // Tier 1 — Daily check-in streak (logging anything at all)
+  firstFire:      {icon:'🔥',name:'First Fire',        desc:'7 days logging in a row',          tier:'Tier 1 — Check-in Streak'},
+  threeWeeks:     {icon:'⚡',name:'Three Weeks Strong', desc:'21 days logging in a row',         tier:'Tier 1 — Check-in Streak'},
+  unbreakable:    {icon:'👑',name:'Unbreakable',        desc:'84 days logging — full challenge', tier:'Tier 1 — Check-in Streak'},
+  // Tier 2 — Habit-specific wins
+  classAct:       {icon:'🏋️',name:'Class Act',          desc:'Fitstop ticked 30 times',          tier:'Tier 2 — Habit Wins'},
+  stepMaster:     {icon:'👟',name:'Step Master',         desc:'10k steps hit 20 times',           tier:'Tier 2 — Habit Wins'},
+  fuelRight:      {icon:'🥗',name:'Fuel Right',          desc:'Protein target hit 20 times',      tier:'Tier 2 — Habit Wins'},
+  hydrationQueen: {icon:'💧',name:'Hydration Queen',     desc:'Water target hit 30 times',        tier:'Tier 2 — Habit Wins'},
+  bodyFirst:      {icon:'🧘',name:'Body First',          desc:'4 Pilates sessions in one month',  tier:'Tier 2 — Habit Wins'},
+  // Tier 3 — Consistency combos
+  perfectWeek:    {icon:'💎',name:'Perfect Week',        desc:'All habits ticked every day for 7 days straight', tier:'Tier 3 — Consistency'},
+  aboveAndBeyond: {icon:'🚀',name:'Above & Beyond',      desc:'2+ Pilates sessions in one week',  tier:'Tier 3 — Consistency'},
+  fullStack:      {icon:'🌟',name:'Full Stack',           desc:'All habits on same day, 14 days running', tier:'Tier 3 — Consistency'},
+  // Tier 4 — Phase completion
+  phase1:         {icon:'🌙',name:'Phase 1 Complete',    desc:'Finished The Cut — 4 weeks done',  tier:'Tier 4 — Milestones'},
+  phase2:         {icon:'💪',name:'Phase 2 Complete',    desc:'Finished The Build — 8 weeks done',tier:'Tier 4 — Milestones'},
+  phase3:         {icon:'🌿',name:'The Lifestyle',        desc:'12 week challenge complete',        tier:'Tier 4 — Milestones'},
+};
+
+const AWARD_TIER_ORDER = ['Tier 1 — Check-in Streak','Tier 2 — Habit Wins','Tier 3 — Consistency','Tier 4 — Milestones'];
+const ALL_HABITS = ['fitstop','steps','stretch','water']; // habits tracked in daily data (not nutrition numbers)
+const HABIT_LABELS = {fitstop:'Fitstop',steps:'10k Steps',stretch:'Stretch',water:'Water'};
+
+// Phase nutrition targets
+const PHASE_TARGETS = {
+  1:{calMin:1600,calMax:1700,proMin:145},
+  2:{calMin:1800,calMax:1900,proMin:140},
+  3:{calMin:null,calMax:null,proMin:130},
+};
+
+function getToday(){return new Date().toISOString().slice(0,10);}
+function isSunday(dateStr){return new Date(dateStr).getDay()===0;}
+function getData(){try{return JSON.parse(localStorage.getItem('kirsten_data')||'{}');}catch(e){return{};}}
+function saveData(d){localStorage.setItem('kirsten_data',JSON.stringify(d));}
+
+function getCurrentPhase(){
+  const d=getData();const startDate=d._startDate||getToday();
+  const days=Math.floor((new Date(getToday())-new Date(startDate))/86400000)+1;
+  const week=Math.ceil(days/7);
+  if(week>=9)return 3;if(week>=5)return 2;return 1;
+}
+
+// ============================================================
+// SUNDAY HANDLING
+// ============================================================
+function renderDayLayout(){
+  const sunday=isSunday(getToday());
+  document.getElementById('fitstop-card').style.display=sunday?'none':'block';
+  document.getElementById('sunday-section').style.display=sunday?'block':'none';
+}
+
+// ============================================================
+// STREAKS
+// ============================================================
+function getCheckInStreak(){
+  // Any habit OR nutrition logged = checked in
+  const d=getData();let streak=0;const today=new Date();
+  for(let i=0;i<365;i++){
+    const date=new Date(today);date.setDate(today.getDate()-i);
+    const key=date.toISOString().slice(0,10);
+    const day=d[key]||{};
+    const hasActivity=ALL_HABITS.some(h=>day[h])||day['weekly_pilates']||day._cal||day._pro;
+    if(hasActivity)streak++;else break;
+  }
+  return streak;
+}
+
+function getHabitStreak(habit){
+  const d=getData();let streak=0;const today=new Date();
+  for(let i=0;i<365;i++){
+    const date=new Date(today);date.setDate(today.getDate()-i);
+    const key=date.toISOString().slice(0,10);
+    // Skip Sundays for fitstop
+    if(habit==='fitstop'&&isSunday(key)){continue;}
+    if(d[key]&&d[key][habit])streak++;else break;
+  }
+  return streak;
+}
+
+function countHabitTotal(habit){
+  const d=getData();
+  return Object.values(d).filter(day=>day&&typeof day==='object'&&day[habit]).length;
+}
+
+// ============================================================
+// RENDER TODAY
+// ============================================================
+function renderToday(){
+  const d=getData();const today=getToday();const td=d[today]||{};
+  const sun=isSunday(today);
+
+  // Movement habits
+  ['steps','stretch','water'].forEach(h=>{
+    const cb=document.getElementById('cb-'+h);
+    const st=document.getElementById('streak-'+h);
+    if(cb)cb.className='checkbox'+(td[h]?' checked':'');
+    if(st){const s=getHabitStreak(h);st.textContent=s>0?`Current streak: ${s} day${s!==1?'s':''} 🔥`:'Current streak: 0 days';st.className='streak-text'+(s===0?' zero':'');}
+    // Sunday duplicates
+    const cbS=document.getElementById('cb-'+h+'-sun');
+    const stS=document.getElementById('streak-'+h+'-sun');
+    if(cbS)cbS.className='checkbox'+(td[h]?' checked':'');
+    if(stS){const s=getHabitStreak(h);stS.textContent=s>0?`Current streak: ${s} day${s!==1?'s':''} 🔥`:'Current streak: 0 days';stS.className='streak-text'+(s===0?' zero':'');}
+  });
+  if(!sun){
+    const cb=document.getElementById('cb-fitstop');
+    const st=document.getElementById('streak-fitstop');
+    if(cb)cb.className='checkbox'+(td['fitstop']?' checked':'');
+    if(st){const s=getHabitStreak('fitstop');st.textContent=s>0?`Current streak: ${s} day${s!==1?'s':''} 🔥`:'Current streak: 0 days';st.className='streak-text'+(s===0?' zero':'');}
+  }
+
+  // Nutrition inputs
+  renderNutriInputs();
+  checkAwards();
+}
+
+function toggleHabit(habit){
+  const d=getData();const today=getToday();if(!d[today])d[today]={};
+  d[today][habit]=!d[today][habit];saveData(d);renderToday();
+}
+
+// ============================================================
+// NUTRITION NUMBER ENTRY
+// ============================================================
+function renderNutriInputs(){
+  const d=getData();const today=getToday();const td=d[today]||{};
+  const phase=getCurrentPhase();const targets=PHASE_TARGETS[phase];
+
+  // Targets text
+  const calTargetEl=document.getElementById('cal-target-text');
+  const proTargetEl=document.getElementById('pro-target-text');
+  if(calTargetEl)calTargetEl.textContent=targets.calMin?`${targets.calMin}–${targets.calMax} kcal`:'Track loosely';
+  if(proTargetEl)proTargetEl.textContent=`${targets.proMin}g minimum`;
+
+  // Restore values
+  const calInput=document.getElementById('cal-input');
+  const proInput=document.getElementById('pro-input');
+  if(calInput&&td._cal)calInput.value=td._cal;
+  if(proInput&&td._pro)proInput.value=td._pro;
+
+  updateNutriStatus();
+}
+
+function saveNutri(){
+  const d=getData();const today=getToday();if(!d[today])d[today]={};
+  const cal=parseFloat(document.getElementById('cal-input').value)||null;
+  const pro=parseFloat(document.getElementById('pro-input').value)||null;
+  if(cal)d[today]._cal=cal;else delete d[today]._cal;
+  if(pro)d[today]._pro=pro;else delete d[today]._pro;
+  saveData(d);updateNutriStatus();checkAwards();
+}
+
+function updateNutriStatus(){
+  const phase=getCurrentPhase();const targets=PHASE_TARGETS[phase];
+  const cal=parseFloat(document.getElementById('cal-input').value)||null;
+  const pro=parseFloat(document.getElementById('pro-input').value)||null;
+  const calStatus=document.getElementById('cal-status');
+  const proStatus=document.getElementById('pro-status');
+
+  if(calStatus){
+    if(!cal){calStatus.textContent='Not logged';calStatus.className='nutri-status empty';}
+    else if(targets.calMin===null){calStatus.textContent='Logged ✓';calStatus.className='nutri-status good';}
+    else if(cal<targets.calMin){calStatus.textContent=`Under by ${targets.calMin-cal}`;calStatus.className='nutri-status under';}
+    else if(cal>targets.calMax){calStatus.textContent=`Over by ${cal-targets.calMax}`;calStatus.className='nutri-status over';}
+    else{calStatus.textContent='On target ✓';calStatus.className='nutri-status good';}
+  }
+  if(proStatus){
+    if(!pro){proStatus.textContent='Not logged';proStatus.className='nutri-status empty';}
+    else if(pro>=targets.proMin){proStatus.textContent='Hit ✓';proStatus.className='nutri-status good';}
+    else{proStatus.textContent=`${targets.proMin-pro}g short`;proStatus.className='nutri-status under';}
+  }
+}
+
+function resetToday(){
+  if(!confirm('Reset all of today\'s habits?'))return;
+  const d=getData();d[getToday()]={};saveData(d);
+  document.getElementById('cal-input').value='';
+  document.getElementById('pro-input').value='';
+  renderToday();renderWeeklyCard();
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function exportData(){
+  const json=JSON.stringify(getData(),null,2);
+  navigator.clipboard.writeText(json).then(()=>{flashBtn('.btn-export','Copied ✓');}).catch(()=>{
+    const ta=document.createElement('textarea');ta.value=json;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);flashBtn('.btn-export','Copied ✓');
+  });
+}
+
+function flashBtn(selector,text){
+  const btn=document.querySelector(selector);if(!btn)return;
+  const orig=btn.textContent;btn.textContent=text;btn.style.color='var(--green)';
+  setTimeout(()=>{btn.textContent=orig;btn.style.color='';},2000);
+}
+
+function importData(){
+  document.getElementById('importModal').classList.add('open');
+  document.getElementById('importTextarea').value='';
+  document.getElementById('importError').style.display='none';
+  setTimeout(()=>document.getElementById('importTextarea').focus(),300);
+}
+
+function confirmImport(){
+  try{
+    const parsed=JSON.parse(document.getElementById('importTextarea').value.trim());
+    saveData(parsed);renderToday();renderWeeklyCard();
+    document.getElementById('importModal').classList.remove('open');
+    flashBtn('.btn-import','Imported ✓');
+  }catch(err){document.getElementById('importError').style.display='block';}
+}
+
+function closeImportModal(){
+  document.getElementById('importModal').classList.remove('open');
+  document.getElementById('importError').style.display='none';
+}
+
+// ============================================================
+// WEEKLY PILATES
+// ============================================================
+function getWeekStart(date){const d=new Date(date);const day=d.getDay();const diff=day===0?-6:1-day;d.setDate(d.getDate()+diff);return d.toISOString().slice(0,10);}
+function getWeekDates(){const ws=getWeekStart(new Date());const dates=[];for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(d.getDate()+i);dates.push(d.toISOString().slice(0,10));}return dates;}
+
+function getWeekPilatesCount(){
+  const data=getData();return getWeekDates().filter(date=>data[date]&&data[date]['weekly_pilates']).length;
+}
+
+function getWeeklyStreak(){
+  const data=getData();let streak=0;const today=new Date();
+  for(let w=0;w<52;w++){
+    const ws=new Date(today);ws.setDate(today.getDate()-(w*7));const wsStr=getWeekStart(ws);
+    const dates=[];for(let i=0;i<7;i++){const d=new Date(wsStr);d.setDate(d.getDate()+i);dates.push(d.toISOString().slice(0,10));}
+    if(dates.some(date=>data[date]&&data[date]['weekly_pilates']))streak++;else break;
+  }
+  return streak;
+}
+
+function toggleWeeklyHabit(habit){
+  const data=getData();const today=getToday();if(!data[today])data[today]={};
+  data[today]['weekly_'+habit]=!data[today]['weekly_'+habit];
+  saveData(data);renderWeeklyCard();checkAwards();
+}
+
+function renderWeeklyCard(){
+  const data=getData();const today=getToday();const td=data[today]||{};
+  const count=getWeekPilatesCount();const weekDone=count>=1;const todayChecked=!!td['weekly_pilates'];
+  const cb=document.getElementById('cb-pilates');if(cb)cb.className='checkbox'+(todayChecked?' checked':'');
+  const status=document.getElementById('weeklyStatus');
+  if(status){status.textContent=weekDone?'✓ Done this week':'Not yet this week';status.className='weekly-status '+(weekDone?'done':'pending');}
+  const st=document.getElementById('streak-pilates');
+  if(st){const s=getWeeklyStreak();st.textContent=s>0?`${s} week streak 🔥`:'No streak yet';st.className='streak-text'+(s===0?' zero':'');}
+  const dayNames=['M','T','W','T','F','S','S'];const weekDates=getWeekDates();const todayIdx=weekDates.indexOf(today);
+  const row=document.getElementById('weekDaysRow');
+  if(row){row.innerHTML=weekDates.map((date,i)=>{const done=data[date]&&data[date]['weekly_pilates'];const isToday=date===today;let cls='wd-circle';if(done)cls+=' done';else if(isToday)cls+=' today-dot';return`<div class="week-day-dot"><span class="wd-label">${dayNames[i]}</span><div class="${cls}">${done?'✓':''}</div></div>`;}).join('');}
+  const pc=document.getElementById('pilatesCount');
+  if(pc){if(count===0)pc.innerHTML='';else if(count===1)pc.innerHTML=`<span>1 session</span> this week — minimum hit ✓`;else pc.innerHTML=`<span>${count} sessions</span> this week — Above & Beyond 🚀`;}
+}
+
+// ============================================================
+// AWARDS
+// ============================================================
+function getEarnedAwards(){return getData()._awards||{};}
+
+function earnAward(id){
+  const d=getData();if(!d._awards)d._awards={};if(d._awards[id])return;
+  d._awards[id]=getToday();saveData(d);showAwardPopup(id);
+}
+
+function showAwardPopup(id){
+  const a=AWARD_DEFS[id];
+  document.getElementById('popupIcon').textContent=a.icon;
+  document.getElementById('popupTitle').textContent=a.name;
+  document.getElementById('popupSub').textContent=a.desc;
+  document.getElementById('awardPopup').classList.add('show');
+}
+
+function closeAwardPopup(){document.getElementById('awardPopup').classList.remove('show');renderAwards();}
+
+function checkAwards(){
+  const earned=getEarnedAwards();const data=getData();const today=getToday();
+
+  // Tier 1 — check-in streak
+  const ci=getCheckInStreak();
+  if(ci>=7&&!earned.firstFire)earnAward('firstFire');
+  if(ci>=21&&!earned.threeWeeks)earnAward('threeWeeks');
+  if(ci>=84&&!earned.unbreakable)earnAward('unbreakable');
+
+  // Tier 2 — habit totals
+  if(countHabitTotal('fitstop')>=30&&!earned.classAct)earnAward('classAct');
+  if(countHabitTotal('steps')>=20&&!earned.stepMaster)earnAward('stepMaster');
+  if(countHabitTotal('water')>=30&&!earned.hydrationQueen)earnAward('hydrationQueen');
+  // Protein hit count
+  const proHits=Object.values(data).filter(day=>{
+    if(!day||typeof day!=='object')return false;
+    const pro=day._pro;const phase=getCurrentPhase();
+    return pro&&pro>=PHASE_TARGETS[phase].proMin;
+  }).length;
+  if(proHits>=20&&!earned.fuelRight)earnAward('fuelRight');
+  // Body first — 4 Pilates in current month
+  const monthStart=new Date();monthStart.setDate(1);let monthPilates=0;
+  for(let i=0;i<31;i++){const d=new Date(monthStart);d.setDate(d.getDate()+i);if(d>new Date())break;const key=d.toISOString().slice(0,10);if(data[key]&&data[key]['weekly_pilates'])monthPilates++;}
+  if(monthPilates>=4&&!earned.bodyFirst)earnAward('bodyFirst');
+
+  // Tier 3
+  if(getWeekPilatesCount()>=2&&!earned.aboveAndBeyond)earnAward('aboveAndBeyond');
+  // Perfect week — all non-Sunday habits ticked 7 days
+  const weekDates=getWeekDates();const passedDays=weekDates.filter(d=>d<=today);
+  if(passedDays.length===7){
+    const perfect=passedDays.every(date=>{
+      const day=data[date]||{};const sun=isSunday(date);
+      const habitsToCheck=sun?['steps','stretch','water']:ALL_HABITS;
+      return habitsToCheck.every(h=>day[h]);
+    });
+    if(perfect&&!earned.perfectWeek)earnAward('perfectWeek');
+  }
+  // Full stack — all habits same day 14 days
+  let fullStackRun=0;const todayD=new Date();
+  for(let i=0;i<14;i++){const date=new Date(todayD);date.setDate(todayD.getDate()-i);const key=date.toISOString().slice(0,10);const day=data[key]||{};const sun=isSunday(key);const habitsToCheck=sun?['steps','stretch','water']:ALL_HABITS;if(habitsToCheck.every(h=>day[h]))fullStackRun++;else break;}
+  if(fullStackRun>=14&&!earned.fullStack)earnAward('fullStack');
+
+  // Tier 4 — phase completion
+  const startDate=data._startDate||today;
+  const days=Math.floor((new Date(today)-new Date(startDate))/86400000)+1;const week=Math.ceil(days/7);
+  if(week>=5&&!earned.phase1)earnAward('phase1');
+  if(week>=9&&!earned.phase2)earnAward('phase2');
+  if(week>=13&&!earned.phase3)earnAward('phase3');
+}
+
+function renderAwards(){
+  const earned=getEarnedAwards();
+  const byTier={};
+  Object.entries(AWARD_DEFS).forEach(([id,a])=>{if(!byTier[a.tier])byTier[a.tier]=[];byTier[a.tier].push({id,...a});});
+  let html='';
+  AWARD_TIER_ORDER.forEach(tier=>{
+    const awards=byTier[tier]||[];
+    html+=`<div class="awards-section-title">${tier}</div><div class="awards-grid">`;
+    awards.forEach(({id,icon,name,desc})=>{
+      const isEarned=!!earned[id];
+      html+=`<div class="award-card ${isEarned?'earned':'locked'}">${isEarned?'<div class="award-earned-badge">EARNED</div>':''}<span class="award-icon">${icon}</span><div class="award-name">${name}</div><div class="award-desc">${desc}</div>${isEarned?`<div class="award-date">${earned[id]}</div>`:'<div class="award-date" style="opacity:0.3">Locked</div>'}</div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('awardsContainer').innerHTML=html;
+}
+
+// ============================================================
+// HEADER
+// ============================================================
+function renderHeader(){
+  document.getElementById('headerDate').textContent=new Date().toLocaleDateString('en-AU',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const d=getData();const startDate=d._startDate||getToday();if(!d._startDate){d._startDate=startDate;saveData(d);}
+  const days=Math.floor((new Date(getToday())-new Date(startDate))/86400000)+1;const week=Math.ceil(days/7);
+  let label='Phase 1 — The Cut',cls='phase-1';
+  if(week>=9){label='Phase 3 — The Lifestyle';cls='phase-3';}else if(week>=5){label='Phase 2 — The Build';cls='phase-2';}
+  const badge=document.getElementById('phaseBadge');badge.textContent=`Week ${week} · ${label}`;badge.className='phase-badge '+cls;
+}
+
+// ============================================================
+// PROGRESS
+// ============================================================
+function renderProgress(){
+  const data=getData();const today=getToday();
+  const todayHabits=ALL_HABITS.filter(h=>(data[today]||{})[h]).length;
+  const longestStreak=Math.max(getCheckInStreak(),...ALL_HABITS.map(h=>getHabitStreak(h)));
+  document.getElementById('statsGrid').innerHTML=`<div class="stat-card"><div class="stat-value">${todayHabits}/${ALL_HABITS.length}</div><div class="stat-label">Today Complete</div></div><div class="stat-card"><div class="stat-value">${longestStreak}</div><div class="stat-label">Best Streak</div></div>`;
+
+  // 7-day grid
+  const days=[];const dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push({key:d.toISOString().slice(0,10),label:dayNames[d.getDay()]});}
+  document.getElementById('dayHeaders').innerHTML='<span></span>'+days.map(d=>`<span>${d.label}</span>`).join('');
+  document.getElementById('gridRows').innerHTML=ALL_HABITS.map(h=>`<div class="grid-row"><span class="habit-label">${HABIT_LABELS[h]}</span>${days.map(d=>{const rest=h==='fitstop'&&isSunday(d.key);const filled=data[d.key]&&data[d.key][h];return`<div class="grid-dot${filled?' filled':rest?' rest':''}"></div>`;}).join('')}</div>`).join('');
+
+  // Phase completion — all 3 phases stacked
+  const startDate=data._startDate||today;
+  const totalDays=Math.floor((new Date(today)-new Date(startDate))/86400000)+1;
+  const phaseColors=['var(--gold)','var(--teal)','var(--green)'];
+  const phaseNames=['Phase 1 — The Cut','Phase 2 — The Build','Phase 3 — The Lifestyle'];
+  let html='';
+  for(let p=1;p<=3;p++){
+    const phaseStart=(p-1)*28;const phaseEnd=p*28;
+    const phaseDaysElapsed=Math.max(0,Math.min(totalDays-phaseStart,28));
+    const isLocked=totalDays<=phaseStart;
+    const pct=Math.round(phaseDaysElapsed/28*100);
+    const color=phaseColors[p-1];
+    // Per-habit completion within this phase
+    let habRows='';
+    ALL_HABITS.forEach(h=>{
+      let done=0,total=0;
+      for(let i=0;i<28;i++){
+        const date=new Date(startDate);date.setDate(date.getDate()+phaseStart+i);
+        if(date>new Date())break;
+        const key=date.toISOString().slice(0,10);
+        if(h==='fitstop'&&isSunday(key))continue;
+        total++;if(data[key]&&data[key][h])done++;
+      }
+      if(total>0)habRows+=`<div class="phase-hab-row"><span class="phase-hab-name">${HABIT_LABELS[h]}</span><span class="phase-hab-val">${done}/${total}</span></div>`;
+    });
+    html+=`<div class="phase-block${isLocked?' phase-locked':''}">
+      <div class="phase-block-header">
+        <span class="phase-block-title" style="color:${color}">${phaseNames[p-1]}</span>
+        <span class="phase-block-pct" style="color:${color}">${isLocked?'Locked':pct+'%'}</span>
+      </div>
+      <div class="phase-bar-bg"><div class="phase-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+      ${habRows}
+    </div>`;
+  }
+  document.getElementById('phaseCompletionSection').innerHTML=html;
+}
+
+// ============================================================
+// GUIDE
+// ============================================================
+function showPhaseGuide(p){
+  ['1','2','3'].forEach(n=>{document.getElementById('pbtn-'+n).className='phase-btn'+(n==p?` active-p${n}`:'');});
+  const content={
+    1:`<div class="stack-title" style="color:var(--gold)">⚡ Phase 1 — The Cut (Weeks 1–4)</div><div class="phase-row"><span class="label">Calories</span><span class="val">1,600–1,700 kcal</span></div><div class="phase-row"><span class="label">Protein</span><span class="val">145g minimum</span></div><div class="phase-row"><span class="label">Steps</span><span class="val">10,000 daily</span></div><div class="phase-row"><span class="label">Water</span><span class="val">2.5–3L daily</span></div><div class="phase-row"><span class="label">Training</span><span class="val">Fitstop 5–6x/wk</span></div><div class="quote-block" style="margin-top:14px">This is the hardest phase. Trust the process — results come fast when you're consistent.</div>`,
+    2:`<div class="stack-title" style="color:var(--teal)">🔥 Phase 2 — The Build (Weeks 5–8)</div><div class="phase-row"><span class="label">Calories</span><span class="val">1,800–1,900 kcal</span></div><div class="phase-row"><span class="label">Protein</span><span class="val">140g minimum</span></div><div class="phase-row"><span class="label">Steps</span><span class="val">10,000 daily</span></div><div class="phase-row"><span class="label">Water</span><span class="val">2.5–3L daily</span></div><div class="phase-row"><span class="label">Training</span><span class="val">Fitstop + Pilates</span></div><div class="quote-block" style="margin-top:14px">Weight loss slows here — that's normal. Trust the mirror more than the scale.</div>`,
+    3:`<div class="stack-title" style="color:var(--green)">🌿 Phase 3 — The Lifestyle (Weeks 9–12)</div><div class="phase-row"><span class="label">Calories</span><span class="val">Track loosely</span></div><div class="phase-row"><span class="label">Protein</span><span class="val">130g — non-negotiable</span></div><div class="phase-row"><span class="label">Steps</span><span class="val">10,000 daily</span></div><div class="phase-row"><span class="label">Water</span><span class="val">2.5L minimum</span></div><div class="phase-row"><span class="label">Focus</span><span class="val">Sleep + mindset</span></div><div class="quote-block" style="margin-top:14px">You've built the habits. Now they work for you automatically.</div>`
+  };
+  document.getElementById('phaseGuideContent').innerHTML=content[p];
+}
+
+// ============================================================
+// WEIGHT
+// ============================================================
+function renderWeightHistory(){
+  const d=getData();const entries=(d._weights||[]).slice().reverse();
+  if(!entries.length){document.getElementById('weightHistory').innerHTML='<div style="color:var(--muted);font-size:13px;padding:8px 0">No entries yet.</div>';return;}
+  document.getElementById('weightHistory').innerHTML=entries.map((e,i)=>{const prev=entries[i+1];let diffHtml='';if(prev){const diff=(e.kg-prev.kg).toFixed(1);const cls=diff<0?'w-down':'w-up';const sign=diff<0?'':'+';diffHtml=`<span class="w-diff ${cls}">${sign}${diff}kg</span>`;}return`<div class="weight-entry"><span class="w-date">${e.date}</span><span class="w-val">${e.kg} kg ${diffHtml}</span></div>`;}).join('');
+}
+
+function logWeight(){
+  const val=parseFloat(document.getElementById('weightInput').value);
+  if(isNaN(val)||val<30||val>200){alert('Enter a valid weight');return;}
+  const d=getData();if(!d._weights)d._weights=[];d._weights=d._weights.filter(e=>e.date!==getToday());
+  d._weights.push({date:getToday(),kg:val});d._weights.sort((a,b)=>a.date.localeCompare(b.date));
+  saveData(d);document.getElementById('weightInput').value='';renderWeightHistory();
+}
+
+// ============================================================
+// PANELS
+// ============================================================
+function openPanel(name){document.getElementById('panel-'+name).classList.add('open');}
+function closePanel(name){document.getElementById('panel-'+name).classList.remove('open');}
+document.querySelectorAll('.panel-overlay').forEach(o=>{o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+
+// ============================================================
+// NAV
+// ============================================================
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(name==='progress')renderProgress();
+  if(name==='weight')renderWeightHistory();
+  if(name==='awards')renderAwards();
+}
+
+// ============================================================
+// DEV MODE — tap title 5x
+// ============================================================
+let devTaps=0,devTimer=null;
+function devTap(){
+  devTaps++;clearTimeout(devTimer);devTimer=setTimeout(()=>{devTaps=0;},2000);
+  if(devTaps>=5){devTaps=0;const p=document.getElementById('devPanel');p.style.display=p.style.display==='none'?'block':'none';if(p.style.display==='block'){showPage('weight',document.querySelector('.nav button:nth-child(5)'));setTimeout(()=>p.scrollIntoView({behavior:'smooth'}),100);}}
+}
+function devTriggerAward(id){const d=getData();if(!d._awards)d._awards={};delete d._awards[id];saveData(d);earnAward(id);}
+function devResetAwards(){const d=getData();d._awards={};saveData(d);renderAwards();alert('Awards reset');}
+function devResetAll(){if(confirm('Delete ALL data?')){localStorage.removeItem('kirsten_data');location.reload();}}
+function devSetPhase(phase){const d=getData();const weeksBack=phase===1?0:phase===2?4:8;const start=new Date();start.setDate(start.getDate()-(weeksBack*7));d._startDate=start.toISOString().slice(0,10);saveData(d);renderHeader();alert(`Jumped to Phase ${phase}`);}
+function devSeedData(){
+  const d=getData();const today=new Date();
+  for(let i=6;i>=1;i--){const date=new Date(today);date.setDate(today.getDate()-i);const key=date.toISOString().slice(0,10);d[key]={};ALL_HABITS.forEach(h=>d[key][h]=true);d[key]['weekly_pilates']=true;d[key]._cal=1650;d[key]._pro=148;}
+  if(!d._startDate)d._startDate=getToday();saveData(d);renderToday();renderWeeklyCard();alert('Test data seeded 🔥');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderHeader();
+renderDayLayout();
+renderToday();
+renderWeeklyCard();
+showPhaseGuide(1);
+</script>
+</body>
+</html>
